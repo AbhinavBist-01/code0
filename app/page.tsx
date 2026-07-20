@@ -1,69 +1,136 @@
-import { ModeToggle } from "@/components/ui/mode-toggle";
-import { UserButton } from "@clerk/nextjs";
-import Image from "next/image";
+"use client";
+
+import React, { useState } from "react";
+import { GlassNavbar } from "@/components/home/glass-navbar";
+import { PromptInput } from "@/components/home/prompt-input";
+import { TemplateGrid } from "@/components/home/template-grid";
+import { ProjectSidebar } from "@/components/home/project-sidebar";
+import { WorkspaceView } from "@/components/home/workspace-view";
+import { Spotlight } from "@/components/ui/aceternity/spotlight";
+import { Particles } from "@/components/ui/magicui/particles";
+import { FloatingDock } from "@/components/ui/aceternity/floating-dock";
+import {
+  Sparkles,
+  Terminal,
+  Boxes,
+  Layout,
+  Flame,
+} from "lucide-react";
 
 export default function Home() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activeView, setActiveView] = useState<"prompt" | "workspace">("prompt");
+  const [currentPrompt, setCurrentPrompt] = useState(
+    "Build a modern glassmorphic SaaS analytics dashboard with dark theme, revenue charts, and metric cards."
+  );
+
+  const handleGenerate = (prompt: string, model: string) => {
+    setCurrentPrompt(prompt);
+    setActiveView("workspace");
+  };
+
+  const dockItems = [
+    { title: "Generator", icon: <Sparkles className="h-5 w-5 text-orange-400" />, href: "#" },
+    { title: "Workbench", icon: <Terminal className="h-5 w-5 text-orange-400" />, href: "#" },
+    { title: "Templates", icon: <Boxes className="h-5 w-5 text-orange-400" />, href: "#templates" },
+    { title: "Components", icon: <Layout className="h-5 w-5 text-orange-400" />, href: "#" },
+  ];
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <ModeToggle />
-      <UserButton />
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+    <div className="min-h-screen w-full bg-slate-950 text-slate-100 flex flex-col relative overflow-x-hidden selection:bg-orange-500 selection:text-white font-sans">
+      {/* Background Flame/Orange Particles */}
+      <Particles
+        className="absolute inset-0 z-0 pointer-events-none"
+        quantity={110}
+        color="#f97316"
+        staticity={40}
+      />
+
+      {/* Top Glass Navbar */}
+      <GlassNavbar
+        onToggleSidebar={() => setSidebarOpen(true)}
+        activeView={activeView}
+        onSelectView={setActiveView}
+      />
+
+      {/* History Drawer Sidebar */}
+      <ProjectSidebar
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        onSelectProject={(title, prompt) => {
+          if (prompt) {
+            setCurrentPrompt(prompt);
+            setActiveView("workspace");
+          }
+        }}
+      />
+
+      {/* Main Content Body */}
+      <main className="flex-1 w-full px-4 md:px-6 py-8 flex flex-col items-center z-10 relative space-y-12">
+        {/* Warm Orange Spotlight Highlight */}
+        <Spotlight fill="#f97316" className="-top-36 left-1/2 -translate-x-1/2 md:-top-20" />
+
+        {activeView === "prompt" ? (
+          <>
+            {/* Hero Header Section */}
+            <div className="flex flex-col items-center text-center space-y-4 max-w-3xl pt-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-300 text-xs font-mono">
+                <Flame className="h-3.5 w-3.5 text-orange-400 animate-pulse" />
+                <span>Next-Gen AI Code Builder</span>
+              </div>
+
+              <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white leading-tight font-sans">
+                Build full-stack web apps <br />
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-orange-200 to-orange-500">
+                  in plain English
+                </span>
+              </h1>
+
+              <p className="text-zinc-400 text-sm md:text-base max-w-xl leading-relaxed">
+                Describe your component or page layout. <span className="text-white font-medium">code0</span> generates clean React, TypeScript, and Tailwind CSS code with instant live preview.
+              </p>
+            </div>
+
+            {/* Central v0 Prompt Engine */}
+            <PromptInput onGenerate={handleGenerate} />
+
+            {/* Component Templates Grid */}
+            <div id="templates" className="w-full pt-6">
+              <TemplateGrid
+                onSelectTemplate={(prompt) => {
+                  setCurrentPrompt(prompt);
+                  setActiveView("workspace");
+                }}
+              />
+            </div>
+          </>
+        ) : (
+          /* Live Workspace Split View Mode */
+          <div className="w-full pt-4">
+            <div className="mb-4 flex items-center justify-between">
+              <button
+                onClick={() => setActiveView("prompt")}
+                className="text-xs font-medium text-orange-400 hover:text-orange-300 flex items-center gap-1.5 transition-all cursor-pointer"
+              >
+                &larr; Back to Prompt Generator
+              </button>
+
+              <span className="text-xs text-zinc-500 font-mono">
+                Live Interactive Workbench
+              </span>
+            </div>
+
+            <WorkspaceView promptText={currentPrompt} />
+          </div>
+        )}
       </main>
+
+      {/* Floating Bottom Dock */}
+      <div className="fixed bottom-6 inset-x-0 z-50 flex justify-center pointer-events-none">
+        <div className="pointer-events-auto">
+          <FloatingDock items={dockItems} />
+        </div>
+      </div>
     </div>
   );
 }
